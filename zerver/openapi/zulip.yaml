@@ -5493,6 +5493,13 @@ paths:
 
                                         **Changes**: New in Zulip 9.0 (feature level 246). Previously, the Zulip
                                         server could not be configured to enforce unique names.
+                                    send_channel_events_messages:
+                                      type: boolean
+                                      description: |
+                                        Indicates whether channel event messages are sent in this organization.
+
+                                        **Changes**: New in Zulip 12.0 (feature level 434). Previously,
+                                        channel events were sent unconditionally.
                                     send_welcome_emails:
                                       type: boolean
                                       description: |
@@ -19655,6 +19662,15 @@ paths:
                           Whether [new users joining](/help/restrict-account-creation#configuring-email-domain-restrictions)
                           this organization are required to have an email
                           address in one of the `realm_domains` configured for the organization.
+                      realm_send_channel_events_messages:
+                        type: boolean
+                        description: |
+                          Present if `realm` is present in `fetch_event_types`.
+
+                          Indicates whether channel event messages are sent in this organization.
+
+                          **Changes**: New in Zulip 12.0 (feature level 434). Previously,
+                          channel events were sent unconditionally.
                       realm_send_welcome_emails:
                         type: boolean
                         description: |
@@ -21382,6 +21398,31 @@ paths:
                                 avatar_version: {}
                                 profile_data: {}
                                 is_imported_stub: {}
+                      server_report_message_types:
+                        description: |
+                          Present if `realm` is present in `fetch_event_types`.
+
+                          A list of objects where each object describes a supported
+                          report type for the [message report](/help/report-a-message)
+                          feature.
+
+                          **Changes**: New in Zulip 12.0 (feature level 435).
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties: false
+                          properties:
+                            key:
+                              type: string
+                              description: |
+                                The unique ID for the report message type.
+                            name:
+                              type: string
+                              description: |
+                                The user-facing string for the report message type, to be
+                                displayed in the report message UI, in the user's language.
+                                Note that the actual report will use the name for this type
+                                in the organization's default language.
                       server_supported_permission_settings:
                         description: |
                           Present if `realm` is present in `fetch_event_types`.

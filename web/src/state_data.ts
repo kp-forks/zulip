@@ -326,6 +326,11 @@ export const realm_linkifier_schema = z.object({
     id: z.number(),
 });
 
+export const realm_report_message_types = z.object({
+    key: z.string(),
+    name: z.string(),
+});
+
 // Sync this with zerver.lib.events.do_events_register.
 export const realm_schema = z.object({
     custom_profile_fields: z.array(custom_profile_field_schema),
@@ -481,6 +486,7 @@ export const realm_schema = z.object({
     realm_push_notifications_enabled_end_timestamp: z.nullable(z.number()),
     realm_require_e2ee_push_notifications: z.boolean(),
     realm_require_unique_names: z.boolean(),
+    realm_send_channel_events_messages: z.boolean(),
     realm_send_welcome_emails: z.boolean(),
     realm_signup_announcements_stream_id: z.number(),
     realm_topics_policy: z.enum(["allow_empty_topic", "disable_empty_topic"]),
@@ -503,6 +509,7 @@ export const realm_schema = z.object({
     server_needs_upgrade: z.boolean(),
     server_presence_offline_threshold_seconds: z.number(),
     server_presence_ping_interval_seconds: z.number(),
+    server_report_message_types: z.array(realm_report_message_types),
     server_supported_permission_settings: z.object({
         realm: z.record(z.string(), group_permission_setting_schema),
         stream: z.record(z.string(), group_permission_setting_schema),

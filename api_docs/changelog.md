@@ -20,6 +20,18 @@ format used by the Zulip server that they are interacting with.
 
 ## Changes in Zulip 12.0
 
+**Feature level 435**
+
+* [`POST /register`](/api/register-queue): Added `server_report_message_types`
+  field which contains a list of supported report types for the [message
+  report](/help/report-a-message) feature.
+
+**Feature level 434**
+
+* [`POST /register`](/api/register-queue), [`POST /events`](/api/get-events),
+  `PATCH /realm`: Added a new `send_channel_events_messages` realm setting indicating
+  whether channel event messages are sent in the organization.
+
 **Feature level 433**
 
 * [`GET /users`](/api/get-users), [`GET /users/{user_id}`](/api/get-user),

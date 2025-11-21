@@ -227,6 +227,9 @@ class Realm(models.Model):
     # Day of the week on which the digest is sent (default: Tuesday).
     digest_weekday = models.SmallIntegerField(default=1)
 
+    # Whether channel event messages are enabled in the organizaton.
+    send_channel_events_messages = models.BooleanField(default=False)
+
     send_welcome_emails = models.BooleanField(default=True)
     message_content_allowed_in_email_notifications = models.BooleanField(default=True)
 
@@ -441,8 +444,6 @@ class Realm(models.Model):
     ZULIP_SANDBOX_CHANNEL_NAME = gettext_lazy("sandbox")
     DEFAULT_NOTIFICATION_STREAM_NAME = gettext_lazy("general")
     STREAM_EVENTS_NOTIFICATION_TOPIC_NAME = gettext_lazy("channel events")
-    # Keep this in sync with the dropdown options in the message report
-    # modal (web/src/message_report.ts)
     REPORT_MESSAGE_REASONS = {
         "spam": gettext_lazy("Spam"),
         "harassment": gettext_lazy("Harassment"),
@@ -734,6 +735,7 @@ class Realm(models.Model):
         push_notifications_enabled=bool,
         require_e2ee_push_notifications=bool,
         require_unique_names=bool,
+        send_channel_events_messages=bool,
         send_welcome_emails=bool,
         topics_policy=RealmTopicsPolicyEnum,
         video_chat_provider=int,
