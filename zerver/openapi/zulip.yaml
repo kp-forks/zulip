@@ -12090,6 +12090,8 @@ paths:
                   $ref: "#/components/schemas/CanSubscribeGroup"
                 can_resolve_topics_group:
                   $ref: "#/components/schemas/CanResolveTopicsGroup"
+                can_create_topic_group:
+                  $ref: "#/components/schemas/CanCreateTopicGroup"
                 folder_id:
                   description: |
                     This parameter adds the newly created channel to the specified
@@ -12140,6 +12142,8 @@ paths:
               can_subscribe_group:
                 contentType: application/json
               can_resolve_topics_group:
+                contentType: application/json
+              can_create_topic_group:
                 contentType: application/json
               folder_id:
                 contentType: application/json
@@ -17380,6 +17384,7 @@ paths:
                                 can_send_message_group: {}
                                 can_subscribe_group: {}
                                 can_resolve_topics_group: {}
+                                can_create_topic_group: {}
                                 subscriber_count: {}
                                 stream_weekly_traffic:
                                   type: integer
@@ -22234,6 +22239,7 @@ paths:
                                 can_send_message_group: {}
                                 can_resolve_topics_group: {}
                                 can_subscribe_group: {}
+                                can_create_topic_group: {}
                                 subscriber_count: {}
                                 stream_weekly_traffic:
                                   type: integer
@@ -22521,9 +22527,14 @@ paths:
                     It's an error for this parameter to be false for a public or
                     web-public channel and when is_private is false.
 
+                    This can only be `false` if `can_create_topic_group` for the channel
+                    is the `role:everyone` [system group][system-groups].
+
                     **Changes**: Before Zulip 6.0 (feature level 136), `history_public_to_subscribers`
                     was silently ignored unless the request also contained either `is_private` or
                     `is_web_public`.
+
+                    [system-groups]: /api/group-setting-values#system-groups
                   type: boolean
                   example: false
                 is_default_stream:
@@ -22771,6 +22782,9 @@ paths:
                         Note that a user must have metadata access to a channel and permission
                         to administer the channel in order to modify this setting.
 
+                        Note that using this permission to send a message to a new topic requires
+                        also having permission to create new topics in the channel.
+
                         **Changes**: New in Zulip 10.0 (feature level 333). Previously
                         `stream_post_policy` field used to control the permission to
                         post in the channel.
@@ -22826,6 +22840,30 @@ paths:
                           "old": 15,
                         }
                     - $ref: "#/components/schemas/GroupSettingValueUpdate"
+                can_create_topic_group:
+                  allOf:
+                    - description: |
+                        The set of users who have permission to create new topics in this channel
+                        expressed as an [update to a group-setting value][update-group-setting].
+
+                        Note that using this permission requires also having permission to send
+                        messages in the channel.
+
+                        For [private channels with protected history](/help/channel-permissions#private-channels),
+                        this setting can only be set to `role:everyone` [system group][system-groups].
+
+                        **Changes**: New in Zulip 12.0 (feature level 441). Previously, if you
+                        could send messages in a channel, you could create topics in the channel.
+
+                        [update-group-setting]: /api/group-setting-values#updating-group-setting-values
+                        [system-groups]: /api/group-setting-values#system-groups
+                      example:
+                        {
+                          "new":
+                            {"direct_members": [10], "direct_subgroups": [11]},
+                          "old": 15,
+                        }
+                    - $ref: "#/components/schemas/GroupSettingValueUpdate"
 
             encoding:
               is_private:
@@ -22857,6 +22895,8 @@ paths:
               can_subscribe_group:
                 contentType: application/json
               can_resolve_topics_group:
+                contentType: application/json
+              can_create_topic_group:
                 contentType: application/json
       responses:
         "200":
@@ -23409,6 +23449,8 @@ paths:
                   $ref: "#/components/schemas/MessageRetentionDays"
                 can_add_subscribers_group:
                   $ref: "#/components/schemas/ChannelCanAddSubscribersGroup"
+                can_create_topic_group:
+                  $ref: "#/components/schemas/CanCreateTopicGroup"
                 can_delete_any_message_group:
                   $ref: "#/components/schemas/CanDeleteAnyMessageGroup"
                 can_delete_own_message_group:
@@ -23434,6 +23476,8 @@ paths:
               announce:
                 contentType: application/json
               can_add_subscribers_group:
+                contentType: application/json
+              can_create_topic_group:
                 contentType: application/json
               can_administer_channel_group:
                 contentType: application/json
@@ -25136,6 +25180,7 @@ components:
             can_send_message_group: {}
             can_subscribe_group: {}
             can_resolve_topics_group: {}
+            can_create_topic_group: {}
             subscriber_count: {}
             stream_weekly_traffic:
               type: integer
@@ -25345,6 +25390,8 @@ components:
           $ref: "#/components/schemas/CanSubscribeGroup"
         can_resolve_topics_group:
           $ref: "#/components/schemas/CanResolveTopicsGroup"
+        can_create_topic_group:
+          $ref: "#/components/schemas/CanCreateTopicGroup"
         subscriber_count:
           type: number
           description: |
@@ -26500,6 +26547,8 @@ components:
           $ref: "#/components/schemas/CanSubscribeGroup"
         can_resolve_topics_group:
           $ref: "#/components/schemas/CanResolveTopicsGroup"
+        can_create_topic_group:
+          $ref: "#/components/schemas/CanCreateTopicGroup"
         is_archived:
           type: boolean
           description: |
@@ -28679,6 +28728,9 @@ components:
             Note that a user must have metadata access to a channel and permission
             to administer the channel in order to modify this setting.
 
+            Note that using this permission to send a message to a new topic requires
+            also having permission to create new topics in the channel.
+
             **Changes**: New in Zulip 10.0 (feature level 333). Previously
             `stream_post_policy` field used to control the permission to
             post in the channel.
@@ -28716,6 +28768,26 @@ components:
             **Changes**: New in Zulip 11.0 (feature level 402).
 
             [setting-values]: /api/group-setting-values
+    CanCreateTopicGroup:
+      allOf:
+        - $ref: "#/components/schemas/GroupSettingValue"
+        - description: |
+            A [group-setting value][setting-values] defining the set of users
+            who have permission to create a new topic in this channel.
+
+            Note that using this permission requires also having permission to
+            send messages in the channel.
+
+            Note that this must be the `role:everyone` [system group][system-groups]
+            for [private channels with protected history][private-channels].
+
+            **Changes**: New in Zulip 12.0 (feature level 441). Previously,
+            if you could send messages in a channel, you could create topics in
+            the channel.
+
+            [setting-values]: /api/group-setting-values
+            [private-channels]: /help/channel-permissions/#private-channels
+            [system-groups]: /api/group-setting-values#system-groups
     LinkifierPattern:
       description: |
         The [Python regular
